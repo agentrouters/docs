@@ -1,7 +1,7 @@
-# NeuraGens Documentation
+# Agent Routers Documentation
 
-You can find the online version of the NeuraGens documentation at [documentation](http://neuragens-docs.s3-website-sa-east-1.amazonaws.com/)
+You can find the online version of the Agent Routers documentation at [documentation](https://agentrouters.github.io/docs/)
 
-## Contribution Guidelines
+Agent Routers is a deterministic, priority-based routing engine for multi-agent systems.
 
-If you are submitting documentation for the **current stable release**, submit it to the corresponding branch. For example, documentation for NeuraGens 1 would be submitted to the 1.x branch. Documentation intended for the next release of Neuragens should be submitted to the `main` branch.
+It enables regex-based rule matching with support for sync and async handlers, allowing developers to build predictable orchestration layers without relying on LLMs or web frameworks.
