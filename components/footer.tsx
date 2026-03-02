@@ -16,20 +16,13 @@ export function Footer() {
             >
               nisabmohd
             </Link>
-            . The source code is available on{" "}
-            <Link
-              className="px-1 underline underline-offset-2"
-              href="https://github.com/nisabmohd/Aria-Docs"
-            >
-              GitHub
-            </Link>
             .
           </p>
         </div>
 
-        <div className="gap-4 items-center hidden md:flex">
+        {/* <div className="gap-4 items-center hidden md:flex">
           <FooterButtons />
-        </div>
+        </div> */}
       </div>
     </footer>
   );

@@ -6,14 +6,14 @@ import Image from "next/image";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "AriaDocs - Blog",
+  title: "AgentRouters - Blog",
 };
 
 export default async function BlogIndexPage() {
   const blogs = (await getAllBlogs()).sort(
     (a, b) =>
       stringToDate(b.frontmatter.date).getTime() -
-      stringToDate(a.frontmatter.date).getTime()
+      stringToDate(a.frontmatter.date).getTime(),
   );
   return (
     <div className="w-full mx-auto flex flex-col gap-1 sm:min-h-[91vh] min-h-[88vh] pt-2">
