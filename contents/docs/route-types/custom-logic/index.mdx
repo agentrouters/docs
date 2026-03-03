@@ -1,0 +1,95 @@
+---
+title: Custom Logic
+description: Custom logic routes allow full control over the routing decision process.
+---
+
+Custom logic routes give you complete control over how a match is determined.
+
+Instead of relying purely on regex patterns, you can implement programmatic logic.
+
+This is useful when routing decisions depend on:
+
+- Metadata
+- External services
+- State
+- Complex evaluation rules
+
+---
+
+### Example — Custom Matching Logic
+
+```python:router.py showLineNumbers {10,11,15}
+import asyncio
+from agent_routers import AgentRouter
+
+async def main():
+    router = AgentRouter()
+
+    async def vip_handler(text: str):
+        return "VIP route triggered"
+
+    def custom_match(text: str) -> bool:
+        return "vip" in text.lower() and len(text) > 10
+
+    router.register(
+        name="vip",
+        pattern=custom_match,
+        handler=vip_handler,
+        priority=50,
+    )
+
+    result = await router.route("This is a VIP customer request")
+    print(result)
+
+if __name__ == "__main__":
+    asyncio.run(main())
+```
+
+## BaseRoutingEngine Contract
+
+To create a custom routing engine, you must inherit from
+`BaseRoutingEngine` and implement the following method:
+
+```python
+async def match(self, input_text: str, rules: list) -> Optional[Rule]
+```
+
+Your engine must:
+
+- Receive the raw input text
+- Receive the list of registered rules
+- Return a matching Rule object
+- Return None if no rule matches
+
+### Example — Base Routing Engine
+
+```python:router.py showLineNumbers {8,9,10,11,12,13,16}
+import asyncio
+
+from agent_routers import AgentRouter
+from agent_routers.engines import (
+    BaseRoutingEngine,
+)
+
+class MyEngine(BaseRoutingEngine):
+    async def match(self, input_text, rules):
+        for rule in rules:
+            if rule.compiled_pattern.search(input_text):
+                return rule
+        return None
+
+async def main():
+    router = AgentRouter(engine=MyEngine())
+
+    router.register(
+        name="high",
+        pattern=r"hello",
+        handler=lambda x: "HIGH PRIORITY",
+    )
+
+    result = await router.route("hello")
+    print("Test:", result)
+
+if __name__ == "__main__":
+    asyncio.run(main())
+```
