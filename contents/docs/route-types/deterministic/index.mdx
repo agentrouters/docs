@@ -1,0 +1,117 @@
+---
+title: Deterministic Routes
+description: Deterministic routes use predictable rule-based matching such as regex evaluation.
+---
+
+Deterministic routes are rule-based routes evaluated using explicit patterns.
+
+By default, AgentRouter uses a deterministic routing engine powered by regular expressions.
+
+These routes are:
+
+- Fast
+- Predictable
+- Easy to debug
+- Production-friendly
+
+They are ideal when your routing logic can be expressed as patterns.
+
+---
+
+### Example — Regex Based Deterministic Route
+
+```python:router.py showLineNumbers {10,11,12,13,14,15}
+import asyncio
+from agent_routers import AgentRouter
+
+async def main():
+    router = AgentRouter()
+
+    async def billing_handler(text: str):
+        return f"Billing handler executed: {text}"
+
+    router.register(
+        name="billing",
+        pattern=r"invoice|payment|billing",
+        handler=billing_handler,
+        priority=10,
+    )
+
+    result = await router.route("I need help with payment")
+    print(result)
+
+if __name__ == "__main__":
+    asyncio.run(main())
+```
+
+## Exact Match
+
+Exact Match routes trigger only when the input exactly matches a defined string.
+
+This is useful when you need strict command-style routing.
+
+---
+
+### Example — Exact Command Route
+
+```python:router.py showLineNumbers {10,11,12,13,14,15}
+import asyncio
+from agent_routers import AgentRouter
+
+async def main():
+    router = AgentRouter()
+
+    async def help_handler(text: str):
+        return "Help command triggered"
+
+    router.register(
+        name="help",
+        pattern=r"^/help$",
+        handler=help_handler,
+        priority=100,
+    )
+
+    result = await router.route("/help")
+    print(result)
+
+if __name__ == "__main__":
+    asyncio.run(main())
+```
+
+## Pattern Based Routes
+
+Pattern based routes allow flexible matching using structured expressions.
+
+Unlike strict exact match, pattern-based routes support:
+
+- Partial matching
+- Word boundaries
+- Advanced regex groups
+
+---
+
+### Example — Pattern Matching
+
+```python:router.py showLineNumbers {10,11,12,13,14,15}
+import asyncio
+from agent_routers import AgentRouter
+
+async def main():
+    router = AgentRouter()
+
+    async def product_handler(text: str):
+        return f"Product route triggered: {text}"
+
+    router.register(
+        name="product",
+        pattern=r"product\s+\d+",
+        handler=product_handler,
+        priority=20,
+    )
+
+    result = await router.route("show product 123")
+    print(result)
+
+if __name__ == "__main__":
+    asyncio.run(main())
+```

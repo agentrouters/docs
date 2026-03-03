@@ -15,20 +15,21 @@ export const ROUTES: EachRoute[] = [
     items: [
       { title: "Introduction", href: "/introduction" },
       { title: "Installation", href: "/installation" },
-      /* {
-        title: "Installation",
-        href: "/installation",
-        items: [
-          { title: "Python", href: "/python" },
-          { title: "Gatsby", href: "/gatsby" }, 
-        ],
-      }, */
       { title: "Quick Start Guide", href: "/quick-start-guide" },
       /* { title: "Changelog", href: "/changelog" },
       {
         title: "FAQ",
         href: "/faq",
       }, */
+    ],
+  },
+  {
+    title: "Route Types",
+    href: "/route-types",
+    noLink: true,
+    items: [
+      { title: "Deterministic", href: "/deterministic" },
+      { title: "Custom Logic", href: "/custom-logic" },
     ],
   },
 ];
