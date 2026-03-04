@@ -1,0 +1,144 @@
+---
+description: Complete guide for implementing a custom fallback routing
+  engine.
+title: Fallback Engine
+---
+
+The FallbackEngine adds a safe fallback behavior to the routing system.
+
+Strategy:
+
+1.  Attempt deterministic matching
+2.  If no rule matches, search for a rule named "default"
+3.  If no default rule exists, return None
+
+This guarantees predictable routing behavior.
+
+---
+
+## Engine Contract
+
+All routing engines must inherit from:
+
+```python
+    BaseRoutingEngine
+```
+
+And implement:
+
+```python
+    async def match(self, input_text, rules)
+```
+
+The method must return:
+
+- A matched rule object
+- Or None if no rule
+
+**Why Use a Fallback Engine?**
+
+- Guarantees a response
+- Enables catch-all behavior
+- Implements logical 404 handling
+- Safer production routing
+- Clean separation of routing logic and rules
+
+### Rule Structure
+
+When registering rules:
+
+```python
+    router.register(
+        name="rule_name",
+        pattern=r"regex_pattern",
+        handler=callable_function,
+        priority=int
+    )
+```
+
+Fields:
+
+- name: Unique rule identifier
+- pattern: Regex used for matching
+- handler: Function executed on match
+- priority: Rule precedence (higher = evaluated first)
+
+---
+
+### Execution Flow
+
+Example:
+
+```python
+    result = await router.route("unknown input")
+```
+
+Flow:
+
+1.  DeterministicEngine tries to match
+2.  No match found
+3.  FallbackEngine searches for "default"
+4.  Default rule is returned
+5.  Default handler is executed
+
+Output:
+
+```python
+    DEFAULT HANDLER
+```
+
+---
+
+## Example — Fallback Engine
+
+```python:router.py showLineNumbers {9,10,11,13,14,15,16,17,18,19,20,21,23,29}
+import asyncio
+
+from agent_routers import AgentRouter
+from agent_routers.engines import (
+    DeterministicEngine,
+    BaseRoutingEngine,
+)
+
+class FallbackEngine(BaseRoutingEngine):
+    def __init__(self):
+        self.primary = DeterministicEngine()
+
+    async def match(self, input_text, rules):
+        rule = await self.primary.match(input_text, rules)
+
+        if rule:
+            return rule
+
+        for rule in rules:
+            if rule.name == "default":
+                return rule
+
+        return None
+
+def greet_handler(text: str):
+    return "Hello! (sync)"
+
+async def main():
+    router = AgentRouter(engine=FallbackEngine())
+
+    router.register(
+        name="greet",
+        pattern=r"hello",
+        handler=greet_handler,
+        priority=1,
+    )
+
+    router.register(
+        name="default",
+        pattern=r".*",
+        handler=lambda x: "DEFAULT HANDLER",
+        priority=-1,
+    )
+
+    result = await router.route("unknown input")
+    print("Test:", result)
+
+if __name__ == "__main__":
+    asyncio.run(main())
+```
