@@ -30,6 +30,7 @@ export const ROUTES: EachRoute[] = [
     items: [
       { title: "Deterministic", href: "/deterministic" },
       { title: "Custom Logic", href: "/custom-logic" },
+      { title: "Fallback Engine", href: "/fallback-engine" },
     ],
   },
 ];
